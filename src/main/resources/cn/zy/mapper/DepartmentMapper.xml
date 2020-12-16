@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.zy.mapper.DepartmentMapper">
+    <sql id="table_name">
+        tbl_dept
+    </sql>
+    <sql id="select_fields">
+        dept_id,dept_name,dept_leader
+    </sql>
+    <sql id="insert_fields">
+        dept_name, dept_leader
+    </sql>
+    <resultMap id="deptResult" type="cn.zy.bean.Department">
+        <id column="dept_id" property="deptId"></id>
+        <result column="dept_name" property="deptName"></result>
+        <result column="dept_leader" property="deptLeader"></result>
+    </resultMap>
+
+    <!-- 新增 -->
+    <insert id="insertDept" parameterType="cn.zy.bean.Department">
+        INSERT
+        INTO
+        <include refid="table_name"></include>
+        VALUES
+        (#{department.deptId},#{department.deptName}, #{department.deptLeader})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="updateDeptById" parameterType="cn.zy.bean.Department">
+        UPDATE
+        <include refid="table_name"></include>
+        SET
+        dept_name = #{department.deptName,jdbcType=VARCHAR},
+        dept_leader = #{department.deptLeader,jdbcType=VARCHAR}
+        WHERE
+        dept_id = #{department.deptId}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteDeptById" parameterType="Integer">
+        DELETE
+        FROM
+        <include refid="table_name"></include>
+        WHERE
+        dept_id=#{deptId}
+    </delete>
+
+    <!-- 按id查询 -->
+    <select id="selectOneById" parameterType="Integer" resultMap="deptResult">
+        SELECT
+        <include refid="select_fields"></include>
+        FROM
+        <include refid="table_name"></include>
+        WHERE
+        dept_id=#{deptId}
+    </select>
+
+    <!-- 按领导查询 -->
+    <select id="selectOneByLeader" parameterType="String" resultMap="deptResult">
+        SELECT
+        <include refid="select_fields"></include>
+        FROM
+        <include refid="table_name"></include>
+        WHERE
+        dept_leader=#{deptLeader}
+    </select>
+
+    <!-- 按名字查询 -->
+    <select id="selectOneByName" parameterType="String" resultMap="deptResult">
+        SELECT
+        <include refid="select_fields"></include>
+        FROM
+        <include refid="table_name"></include>
+        WHERE
+        dept_name=#{deptName}
+    </select>
+
+
+    <!--分页查询 -->
+    <select id="selectDeptsByLimitAndOffset" resultMap="deptResult">
+        SELECT
+        <!--dept_id as 'deptId', dept_name as 'deptName', dept_leader as 'deptLeader' -->
+        <include refid="select_fields"></include>
+        FROM
+        <include refid="table_name"></include>
+        LIMIT
+        #{offset} , #{limit}
+    </select>
+
+    <select id="selectDeptList" resultMap="deptResult">
+        SELECT
+        <include refid="select_fields"></include>
+        FROM
+        <include refid="table_name"></include>
+    </select>
+
+    <!--查询总记录数 -->
+    <select id="countDepts" resultType="Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        <include refid="table_name"></include>
+    </select>
+
+
+    <select id="checkDeptsExistsByNameAndleader" parameterType="String">
+        SELECT
+        COUNT(dept_id)
+        FROM
+        <include refid="table_name"></include>
+        WHERE
+        deptLeader = #{deptLeader}
+        OR
+        deptName = #{deptName}"}
+    </select>
+
+
+</mapper>
